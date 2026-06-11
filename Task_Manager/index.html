@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Medical Integrat</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="medical-bg-container">
+    <div class="grid-overlay"></div>
+    <div class="glow-orb orb-1"></div>
+    <div class="glow-orb orb-2"></div>
+    <div class="ekg-line"></div>
+</div>
+
+<div class="container">
+    <header class="dashboard-header">
+        <div class="header-titles">
+            <h1>Sistem Medical Integrat</h1>
+            <p class="subtitle">Platformă Securizată pentru Monitorizare și Triaj Clinic</p>
+        </div>
+
+        <div class="stats-panel">
+            <div class="stat-card">
+                <span class="stat-label">Total Înregistrați</span>
+                <span id="stat-total" class="stat-value">0</span>
+            </div>
+            <div class="stat-card urgent">
+                <span class="stat-label">Cazuri Critice (Cod Roșu)</span>
+                <span id="stat-critici" class="stat-value">0</span>
+            </div>
+            <div class="stat-card active-consult">
+                <span class="stat-label">Consultați Recent</span>
+                <span id="stat-consultati" class="stat-value">0</span>
+            </div>
+        </div>
+
+        <div class="main-navigation">
+            <button class="nav-btn active" onclick="switchTab('tab-inregistrare')">
+                <span class="btn-icon">✚</span> Înregistrare Pacient
+            </button>
+            <button class="nav-btn" onclick="switchTab('tab-cabinet')">
+                <span class="btn-icon">🩺</span> Cabinet Consultări
+            </button>
+            <button class="nav-btn" onclick="switchTab('tab-arhiva')">
+                <span class="btn-icon">🔍</span> Arhivă & Căutare
+            </button>
+        </div>
+    </header>
+
+    <main class="content-area">
+        <section id="tab-inregistrare" class="tab-content active">
+            <div class="glass-card">
+                <div class="card-header">
+                    <h2>Fișă de Triaj Clinic</h2>
+                    <p class="card-subtitle">Introduceți datele pacientului sosit la unitatea de primiri urgențe</p>
+                </div>
+                <form id="addForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="pId">Număr Fișă Medicală:</label>
+                            <input type="number" id="pId" required placeholder="Ex: 101">
+                        </div>
+                        <div class="form-group">
+                            <label for="pPriority">Nivel Urgență (Cod Triaj):</label>
+                            <select id="pPriority">
+                                <option value="1">🔴 Cod Roșu (Urgență Critică)</option>
+                                <option value="2">🟡 Cod Galben (Urgent)</option>
+                                <option value="3" selected>🟢 Cod Verde (Non-Urgent)</option>
+                                <option value="4">🔵 Cod Albastru (Consult Rutină)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="pName">Nume și Prenume Pacient:</label>
+                        <input type="text" id="pName" required placeholder="Ex: Popescu Ion">
+                    </div>
+                    <div class="form-group">
+                        <label for="pDiag">Diagnostic Prezumtiv:</label>
+                        <input type="text" id="pDiag" required placeholder="Ex: Pneumonie comunitară sau Insuficiență respiratorie">
+                    </div>
+                    <div class="form-group">
+                        <label for="pSymptoms">Descriere Simptome Clinice:</label>
+                        <textarea id="pSymptoms" required placeholder="Introduceți detaliile clinice complete, acuzele pacientului și constatările inițiale..."></textarea>
+                    </div>
+                    <button type="submit" class="btn-action pulse-effect">Înregistrează fișa pacientului</button>
+                </form>
+            </div>
+        </section>
+
+        <section id="tab-cabinet" class="tab-content">
+            <div class="glass-card">
+                <div class="card-header">
+                    <h2>Cabinet Consultații</h2>
+                    <p class="card-subtitle">Repartizarea automată a cazurilor medicale în funcție de gravitate</p>
+                </div>
+                <div class="cabinet-action-zone">
+                    <p class="section-desc">Sistemul evaluează starea tuturor pacienților aflați în așteptare și îl va extrage pe cel cu prioritatea cea mai mare.</p>
+                    <button onclick="preiaUrmatorul()" class="btn-action btn-accent">Preia Următorul Pacient Urgent</button>
+                </div>
+                <div id="triageResult" class="result-box display-placeholder">Niciun pacient în consult curent.</div>
+
+                <div class="heap-management-zone" style="margin-top: 30px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <h3 style="color: #fbbf24; font-size: 16px; margin: 0; font-weight: 600;">⏳ Monitorizare Coadă de Așteptare Activă (Min-Heap)</h3>
+                        <button onclick="incarcaPacientiActivi()" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 10px; border-radius: 4px; font-size: 11px; cursor: pointer;">🔄 Reîmprospătează Coada</button>
+                    </div>
+                    <div id="activeQueuePlaceholder" style="color: var(--text-muted); font-style: italic; font-size: 13px; text-align: center; padding: 10px;">
+                        Nu sunt pacienți în așteptare sau lista nu a fost încărcată.
+                    </div>
+                    <div id="activeQueueContainer" style="display: none; overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; color: #fff;">
+                            <thead>
+                            <tr style="border-bottom: 2px solid rgba(255,255,255,0.1); color: var(--primary-neon);">
+                                <th style="padding: 8px;">Fișă ID</th>
+                                <th style="padding: 8px;">Pacient</th>
+                                <th style="padding: 8px;">Nivel Triaj</th>
+                                <th style="padding: 8px; text-align: center;">Acțiune Alocată</th>
+                            </tr>
+                            </thead>
+                            <tbody id="activeQueueTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="history-zone" style="margin-top: 35px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 20px;">
+                    <h3 style="color: var(--accent-neon); font-size: 16px; margin-bottom: 12px; font-weight: 600;">📋 Registru Consultări Recente (Sesiune Curentă)</h3>
+                    <div id="historyPlaceholder" style="color: var(--text-muted); font-style: italic; font-size: 13px; text-align: center; padding: 10px;">
+                        Nu a fost consultat niciun pacient în această sesiune.
+                    </div>
+                    <div id="historyTableContainer" style="display: none; overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; color: #fff;">
+                            <thead>
+                            <tr style="border-bottom: 2px solid rgba(255,255,255,0.1); color: var(--primary-neon);">
+                                <th style="padding: 8px;">Ora</th>
+                                <th style="padding: 8px;">Fișă</th>
+                                <th style="padding: 8px;">Pacient</th>
+                                <th style="padding: 8px;">Diagnostic</th>
+                                <th style="padding: 8px;">Triaj</th>
+                            </tr>
+                            </thead>
+                            <tbody id="historyTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="tab-arhiva" class="tab-content">
+            <div class="glass-card">
+                <div class="card-header">
+                    <h2>Centru de Cercetare și Arhivă Medicală</h2>
+                    <p class="card-subtitle">Căutare indexată în timp real în dosarele pacienților</p>
+                </div>
+
+                <div class="search-section border-bottom">
+                    <h3>Căutare după Nume Complet</h3>
+                    <div class="search-box">
+                        <input type="text" id="searchNameInput" placeholder="Introduceți numele exact al pacientului...">
+                        <button onclick="cautaInBTree()" class="btn-search">Caută Fișă</button>
+                    </div>
+                    <div id="bTreeResult" class="result-box info-text">Introduceți un nume pentru a interoga sistemul.</div>
+                </div>
+
+                <div class="search-section">
+                    <h3>Filtrare Avansată după Corelații Clinice (Simptome / Diagnostic)</h3>
+                    <div class="search-box">
+                        <input type="text" id="searchKMPInput" placeholder="Cuvânt cheie sau simptom (ex: febră, tuse, fractură)...">
+                        <button onclick="cautaCuKMP()" class="btn-search btn-filter">Filtrează Rapoarte</button>
+                    </div>
+                    <div id="kmpResult" class="result-box info-text">Rezultatele filtrării textului vor fi afișate aici.</div>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

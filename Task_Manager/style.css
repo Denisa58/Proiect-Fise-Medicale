@@ -1,0 +1,157 @@
+:root {
+    --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    --card-bg: rgba(30, 41, 59, 0.7);
+    --border-color: rgba(255, 255, 255, 0.08);
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --primary-neon: #38bdf8;
+    --primary-hover: #0284c7;
+    --accent-neon: #2dd4bf;
+    --danger-neon: #f43f5e;
+    --danger-glow: rgba(244, 63, 94, 0.2);
+}
+
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg-gradient);
+    color: var(--text-main);
+    margin: 0;
+    padding: 40px 20px;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+/* EFECTE DE FUNDAL AVANSATE */
+.medical-bg-container {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    z-index: -1; pointer-events: none;
+    overflow: hidden;
+}
+
+.grid-overlay {
+    position: absolute; width: 100%; height: 100%;
+    background-image: linear-gradient(rgba(255,255,255,0.01) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.01) 1px, transparent 1px);
+    background-size: 30px 30px;
+}
+
+.glow-orb {
+    position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.15;
+}
+.orb-1 { top: -10%; left: -10%; width: 400px; height: 400px; background: var(--primary-neon); }
+.orb-2 { bottom: -10%; right: -10%; width: 500px; height: 500px; background: var(--accent-neon); }
+
+.ekg-line {
+    position: absolute; top: 50%; left: 0; width: 100%; height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(45, 212, 191, 0.1), transparent);
+    animation: pulseMove 6s infinite linear;
+}
+@keyframes pulseMove { 0% { opacity: 0.2; } 50% { opacity: 0.5; } 100% { opacity: 0.2; } }
+
+/* HEADER ȘI PANOU STATISTICI */
+.dashboard-header {
+    margin-bottom: 35px;
+}
+
+.header-titles h1 {
+    font-size: 34px; font-weight: 800; margin: 0;
+    background: linear-gradient(to right, #fff, var(--primary-neon));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.subtitle { color: var(--text-muted); margin: 5px 0 25px 0; font-size: 15px; }
+
+/* Casete de Monitorizare live */
+.stats-panel {
+    display: flex; gap: 16px; margin-bottom: 30px;
+}
+.stat-card {
+    flex: 1; background: rgba(15, 23, 42, 0.6); padding: 16px; border-radius: 10px;
+    border: 1px solid var(--border-color); display: flex; flex-direction: column;
+}
+.stat-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+.stat-value { font-size: 24px; font-weight: 700; color: #fff; margin-top: 4px; }
+.stat-card.urgent { border-left: 4px solid var(--danger-neon); box-shadow: 0 0 15px var(--danger-glow); }
+.stat-card.active-consult { border-left: 4px solid var(--accent-neon); }
+
+/* NAVIGARE */
+.main-navigation {
+    display: flex; gap: 12px; background: rgba(15, 23, 42, 0.4); padding: 6px; border-radius: 10px; border: 1px solid var(--border-color);
+}
+.nav-btn {
+    flex: 1; background: transparent; color: var(--text-muted); border: none; padding: 14px;
+    font-size: 15px; font-weight: 600; border-radius: 8px; cursor: pointer; transition: all 0.2s ease;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.nav-btn:hover { color: #fff; background: rgba(255,255,255,0.03); }
+.nav-btn.active {
+    background: var(--primary-neon); color: #0f172a; font-weight: 700;
+    box-shadow: 0 4px 20px rgba(56, 189, 248, 0.4);
+}
+
+/* CARDURI TIP GLASSMORPHISM */
+.tab-content { display: none; }
+.tab-content.active { display: block; animation: contentFadeIn 0.35s ease; }
+
+.glass-card {
+    background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border-color);
+    padding: 30px; backdrop-filter: blur(12px); box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+}
+.card-header { margin-bottom: 25px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 15px; }
+.card-header h2 { margin: 0; font-size: 22px; color: #fff; font-weight: 600; }
+.card-subtitle { margin: 4px 0 0 0; font-size: 13px; color: var(--text-muted); }
+
+/* FORMULARE */
+.form-row { display: flex; gap: 16px; }
+.form-row .form-group { flex: 1; }
+.form-group { margin-bottom: 18px; }
+label { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 600; color: #cbd5e1; }
+input, textarea, select {
+    width: 100%; padding: 12px; background: rgba(15, 23, 42, 0.8); border: 1px solid var(--border-color);
+    border-radius: 8px; color: #fff; font-size: 14px; box-sizing: border-box; transition: all 0.2s;
+}
+input:focus, textarea:focus, select:focus {
+    outline: none; border-color: var(--primary-neon); box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
+}
+textarea { height: 90px; resize: none; }
+
+/* BUTOANE ACTIONALE */
+.btn-action {
+    background: linear-gradient(135deg, var(--primary-neon) 0%, var(--primary-hover) 100%);
+    color: #0f172a; width: 100%; padding: 14px; font-size: 15px; font-weight: 700; border: none;
+    border-radius: 8px; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.5px;
+}
+.btn-action:hover { transform: translateY(-1px); box-shadow: 0 5px 15px rgba(56, 189, 248, 0.4); }
+.btn-accent { background: linear-gradient(135deg, var(--accent-neon) 0%, #0d9488 100%); }
+.btn-accent:hover { box-shadow: 0 5px 15px rgba(45, 212, 191, 0.4); }
+
+/* ZONE DE CAUTARE SI REZULTATE */
+.search-section { margin-bottom: 24px; }
+.border-bottom { border-bottom: 1px dashed rgba(255,255,255,0.08); padding-bottom: 24px; }
+.search-box { display: flex; gap: 10px; }
+.search-box input { flex: 1; }
+.btn-search {
+    background: #334155; color: #fff; border: none; padding: 0 22px; border-radius: 8px;
+    font-weight: 600; cursor: pointer; transition: background 0.15s;
+}
+.btn-search:hover { background: #475569; }
+.btn-filter { background: #1e293b; border: 1px solid var(--accent-neon); color: var(--accent-neon); }
+.btn-filter:hover { background: rgba(45, 212, 191, 0.1); }
+
+.result-box {
+    margin-top: 15px; padding: 16px; background: rgba(15, 23, 42, 0.7);
+    border-radius: 8px; border: 1px solid var(--border-color); font-size: 14px; line-height: 1.6;
+}
+.display-placeholder { text-align: center; color: var(--text-muted); font-style: italic; }
+.info-text { color: var(--text-muted); font-size: 13px; }
+
+/* INTRARI DOSARE MEDICALE */
+.patient-entry { border-top: 1px solid rgba(255,255,255,0.06); padding-top: 14px; margin-top: 14px; }
+.patient-entry:first-child { border-top: none; padding-top: 0; margin-top: 0; }
+.badge-ui { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; margin-left: 5px; background: rgba(255,255,255,0.1); color: #fff; }
+
+@keyframes contentFadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
